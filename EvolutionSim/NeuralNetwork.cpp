@@ -27,12 +27,12 @@ float ActivationFunctions::tanh(const float x)
     return tanhf(x);
 }
 
-float ActivationFunctions::reLU(const float x)
+float ActivationFunctions::re_lu(const float x)
 {
     return std::max(0.0f, x);
 }
 
-float ActivationFunctions::leaky_reLU(const float x)
+float ActivationFunctions::leaky_re_lu(const float x)
 {
     return std::max(0.1f * x, x);
 }
@@ -44,18 +44,18 @@ float ActivationFunctions::elu(const float x)
 
 ActivationFunctions::ActivationFunction::ActivationFunction(float func(const float x), const float complexity)
 {
-    this->func = func;
-    this->complexity = complexity;
+    this->func_ = func;
+    this->complexity_ = complexity;
 }
 
 inline float ActivationFunctions::ActivationFunction::parse_value(const float x) const
 {
-    return func(x);
+    return func_(x);
 }
 
 float ActivationFunctions::ActivationFunction::get_complexity() const
 {
-    return complexity;
+    return complexity_;
 }
 
 Node::Node(const bool is_input)
@@ -154,7 +154,7 @@ NeuralNetwork::NeuralNetwork()
 
 NeuralNetwork::NeuralNetwork(const NeuralNetwork& other)
 {
-    for(size_t i = 0; i < size_t(InputNode::Num); i++)
+    for(size_t i = 0; i < static_cast<size_t>(InputNode::Num); i++)
         inputs[i] = new Node(*other.inputs[i]);
 
     internal_nodes.reserve(other.internal_nodes.size());
@@ -165,7 +165,7 @@ NeuralNetwork::NeuralNetwork(const NeuralNetwork& other)
         
         if(i / NeuralNetworkSettings::width == 0)
         {
-            for(size_t j = 0; j < size_t(InputNode::Num); j++)
+            for(size_t j = 0; j < static_cast<size_t>(InputNode::Num); j++)
                 new_node->add_connection(inputs[j],
                     mutate_connection_weight(other.internal_nodes[i]->get_connections()[j]->weight));
         }
@@ -178,7 +178,7 @@ NeuralNetwork::NeuralNetwork(const NeuralNetwork& other)
         complexity_ += new_node->get_complexity();
     }
 
-    for(size_t i = 0; i < size_t(OutputNode::Num); i++)
+    for(size_t i = 0; i < static_cast<size_t>(OutputNode::Num); i++)
     {
         const auto new_node = new Node(other.outputs[i]);
         outputs[i] = new_node;
@@ -192,11 +192,11 @@ NeuralNetwork::NeuralNetwork(const NeuralNetwork& other)
 
 NeuralNetwork::~NeuralNetwork()
 {
-    for(auto& input : inputs)
+    for(const auto& input : inputs)
         delete input;
-    for(auto& output : outputs)
+    for(const auto& output : outputs)
         delete output;
-    for(auto& internal_node : internal_nodes)
+    for(const auto& internal_node : internal_nodes)
         delete internal_node;
     internal_nodes.clear();
 }
@@ -204,9 +204,9 @@ NeuralNetwork::~NeuralNetwork()
 void NeuralNetwork::get_values(const float* in, float* out)
 {
     last_request_id++;
-    for(size_t i = 0; i < size_t(InputNode::Num); i++)
+    for(size_t i = 0; i < static_cast<size_t>(InputNode::Num); i++)
         inputs[i]->set_value(in[i]);
-    for(size_t i = 0; i < size_t(OutputNode::Num); i++)
+    for(size_t i = 0; i < static_cast<size_t>(OutputNode::Num); i++)
         out[i] = outputs[i]->get_value(last_request_id);
 }
 

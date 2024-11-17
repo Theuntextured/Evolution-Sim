@@ -1,5 +1,6 @@
 ﻿#pragma once
-#include <SFML/Graphics/RenderWindow.hpp>
+#include "Common.h"
+#include "Creature.h"
 
 class WindowManager
 {
@@ -7,7 +8,8 @@ class WindowManager
 public:
     WindowManager();
     ~WindowManager();
-    inline bool is_window_open() const{ return window->isOpen(); }
+    inline bool is_window_open() const{ return window_->isOpen(); }
+    void draw(const std::vector<Thing*>& things_in_world) const;
 protected:
-    sf::RenderWindow* window;
+    sf::RenderWindow* window_;
 };

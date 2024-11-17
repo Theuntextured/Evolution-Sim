@@ -127,6 +127,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Common.cpp" />
     <ClCompile Include="Creature.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="EvolutionSim.cpp" />
